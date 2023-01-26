@@ -5,5 +5,8 @@ declare module "react-native-flashlight" {
 };
 
 declare module "expo-camera" {
-  export function Camera({ flashMode: any, style: any }): any;
+  export function Camera({ 
+    flashMode: any, 
+    style: any, 
+  }: ListProps): any;
 };

@@ -24,12 +24,18 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#2C2C14"
+      },
+      "package": "com.astronauto.LanternLight"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c23daf56-4629-4fd8-aa38-ff77eeddb589"
       }
     }
   },
   "permissions": {
     "camera": {
-        "scope": "camera"
+      "scope": "camera"
     }
   }
 }

@@ -13,6 +13,7 @@ import {
 } from "react-native-reanimated";
 import { themes } from "../styles/colors";
 import { Camera } from "expo-camera";
+import { Alert } from "react-native";
 
 type NameThemes = keyof typeof themes;
 
@@ -34,27 +35,49 @@ type ThemeProviderProps = {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [currentTheme, setCurrentTheme] = useState<NameThemes>("yellow");
+  const [currentTheme, setCurrentTheme] = useState<NameThemes>("purple");
   const [isActiveLantern, setIsActiveLantern] = useState(false);
+  const [isAcceptPermission, setIsAcceptPermission] = useState(false);
   const colorTheme = useMemo(() => themes[currentTheme], [themes, currentTheme]);
+  
+  //@ts-ignore
+  const [_permission, requestPermission] = Camera.useCameraPermissions();
 
-  const light_3 = useSharedValue(colorTheme.light_3);
-  const light_2 = useSharedValue(colorTheme.light_2);
   const light_1 = useSharedValue(colorTheme.light_1);
   const normal = useSharedValue(colorTheme.normal);
   const dark_1 = useSharedValue(colorTheme.dark_1);
   const dark_2 = useSharedValue(colorTheme.dark_2);
   const dark_3 = useSharedValue(colorTheme.dark_3);
 
+  const requestPermissionCameraAsync = useCallback(async () => {
+    try {
+      const result = await requestPermission();
+  
+      setIsAcceptPermission(result.granted);
+      if (!result.granted) {
+        Alert.alert("Deve aceitar a permissão da câmera para utilizar a lanterna");
+      } 
+    } catch (error) {
+      Alert.alert("Não foi possível enviar pedido de permissão para uso da câmera");
+    }
+  }, [setIsAcceptPermission])
+
   const toggleTheme = useCallback(async () => {
+    if (!isAcceptPermission) {
+      requestPermissionCameraAsync();
+
+      return;
+    }
+
     if (currentTheme === "yellow") {
       setCurrentTheme("purple");
 
-      setIsActiveLantern(true);
+      setIsActiveLantern(false);
+
     } else {
       setCurrentTheme("yellow");
 
-      setIsActiveLantern(false);
+      setIsActiveLantern(true);
     }
   }, [
     currentTheme,
@@ -64,16 +87,25 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     dark_1,
     dark_2,
     dark_3,
-    setIsActiveLantern
+    setIsActiveLantern,
+    requestPermission,
+    isAcceptPermission,
+    requestPermissionCameraAsync
   ]);
 
+  const CONFIGURATION_ANIMATION = { duration: 300 };
+
   useEffect(() => {
-    light_1.value = withTiming(colorTheme.light_1, { duration: 500 });
-    normal.value = withTiming(colorTheme.normal, { duration: 500 });
-    dark_1.value = withTiming(colorTheme.dark_1, { duration: 500 });
-    dark_2.value = withTiming(colorTheme.dark_2, { duration: 500 });
-    dark_3.value = withTiming(colorTheme.dark_3, { duration: 500 });
+    light_1.value = withTiming(colorTheme.light_1, CONFIGURATION_ANIMATION);
+    normal.value = withTiming(colorTheme.normal, CONFIGURATION_ANIMATION);
+    dark_1.value = withTiming(colorTheme.dark_1, CONFIGURATION_ANIMATION);
+    dark_2.value = withTiming(colorTheme.dark_2, CONFIGURATION_ANIMATION);
+    dark_3.value = withTiming(colorTheme.dark_3, CONFIGURATION_ANIMATION);
   }, [currentTheme]);
+
+  useEffect(() => {
+    requestPermissionCameraAsync();
+  }, []);
 
   return (
     <ThemeContext.Provider 
@@ -94,7 +126,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
           width: 1,
           height: 1,
           position: "absolute",
-          zIndex: -2
+          zIndex: -2,
+          opacity: 0,
         }}
         flashMode={isActiveLantern ? 2 : 1}
       />
