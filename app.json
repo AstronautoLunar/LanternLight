@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#2C2C14"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,12 +22,20 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#2C2C14"
+      },
+      "package": "com.astronauto.LanternLight"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "extra": {
+      "eas": {
+        "projectId": "c23daf56-4629-4fd8-aa38-ff77eeddb589"
+      }
+    }
+  },
+  "permissions": {
+    "camera": {
+      "scope": "camera"
     }
   }
 }
