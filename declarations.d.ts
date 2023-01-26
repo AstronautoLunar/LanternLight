@@ -1,5 +1,9 @@
 declare module "react-native-flashlight" {
-  import Flashlight from "react-native-flashlight";
+  export function switchOn(): Promise<void>;
+  export function switchOff(): Promise<void>;
+  export function isSwitchedOn(): Promise<boolean>;
+};
 
-  export default Flashlight;
-}
+declare module "expo-camera" {
+  export function Camera({ flashMode: any, style: any }): any;
+};

@@ -12,8 +12,7 @@ import {
   withTiming 
 } from "react-native-reanimated";
 import { themes } from "../styles/colors";
-import FlashList from "react-native-flashlight";
-import { NativeModules } from "react-native";
+import { Camera } from "expo-camera";
 
 type NameThemes = keyof typeof themes;
 
@@ -36,6 +35,7 @@ type ThemeProviderProps = {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [currentTheme, setCurrentTheme] = useState<NameThemes>("yellow");
+  const [isActiveLantern, setIsActiveLantern] = useState(false);
   const colorTheme = useMemo(() => themes[currentTheme], [themes, currentTheme]);
 
   const light_3 = useSharedValue(colorTheme.light_3);
@@ -50,13 +50,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     if (currentTheme === "yellow") {
       setCurrentTheme("purple");
 
-      // await FlashList.openFlashLight();
-      // NativeModules.FlashLight.switchState();
-      console.log(NativeModules);
+      setIsActiveLantern(true);
     } else {
       setCurrentTheme("yellow");
 
-      // await FlashList.closeFlashLight();
+      setIsActiveLantern(false);
     }
   }, [
     currentTheme,
@@ -65,7 +63,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     normal,
     dark_1,
     dark_2,
-    dark_3
+    dark_3,
+    setIsActiveLantern
   ]);
 
   useEffect(() => {
@@ -90,6 +89,15 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       }}
     >
       {children}
+      <Camera
+        style={{
+          width: 1,
+          height: 1,
+          position: "absolute",
+          zIndex: -2
+        }}
+        flashMode={isActiveLantern ? 2 : 1}
+      />
     </ThemeContext.Provider>
   )
 };
