@@ -1,6 +1,19 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { SharedValue, useSharedValue, withTiming } from "react-native-reanimated";
+import { 
+  createContext, 
+  useCallback, 
+  useContext, 
+  useEffect, 
+  useMemo, 
+  useState 
+} from "react";
+import { 
+  SharedValue, 
+  useSharedValue, 
+  withTiming 
+} from "react-native-reanimated";
 import { themes } from "../styles/colors";
+import FlashList from "react-native-flashlight";
+import { NativeModules } from "react-native";
 
 type NameThemes = keyof typeof themes;
 
@@ -33,12 +46,17 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const dark_2 = useSharedValue(colorTheme.dark_2);
   const dark_3 = useSharedValue(colorTheme.dark_3);
 
-  const toggleTheme = useCallback(() => {
+  const toggleTheme = useCallback(async () => {
     if (currentTheme === "yellow") {
       setCurrentTheme("purple");
 
+      // await FlashList.openFlashLight();
+      // NativeModules.FlashLight.switchState();
+      console.log(NativeModules);
     } else {
       setCurrentTheme("yellow");
+
+      // await FlashList.closeFlashLight();
     }
   }, [
     currentTheme,
@@ -51,11 +69,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   ]);
 
   useEffect(() => {
-    light_1.value = withTiming(colorTheme.light_1);
-    normal.value = withTiming(colorTheme.normal);
-    dark_1.value = withTiming(colorTheme.dark_1);
-    dark_2.value = withTiming(colorTheme.dark_2);
-    dark_3.value = withTiming(colorTheme.dark_3);
+    light_1.value = withTiming(colorTheme.light_1, { duration: 500 });
+    normal.value = withTiming(colorTheme.normal, { duration: 500 });
+    dark_1.value = withTiming(colorTheme.dark_1, { duration: 500 });
+    dark_2.value = withTiming(colorTheme.dark_2, { duration: 500 });
+    dark_3.value = withTiming(colorTheme.dark_3, { duration: 500 });
   }, [currentTheme]);
 
   return (

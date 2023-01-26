@@ -29,5 +29,10 @@
     "web": {
       "favicon": "./assets/favicon.png"
     }
+  },
+  "permissions": {
+    "camera": {
+        "scope": "camera"
+    }
   }
 }
